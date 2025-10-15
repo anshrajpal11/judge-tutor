@@ -5,13 +5,11 @@ import Teacher from "../models/teacher.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import cookie from "cookie-parser";
+
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
 import Review from "../models/review.model.js";
-
-
 
 export const registerUser = async (req, res) => {
   const { name, email, password, collegeName } = req.body;
@@ -36,7 +34,7 @@ export const registerUser = async (req, res) => {
       collageId: collegeId,
       reviews: [],
     });
-    
+
     if (req.file && req.file.buffer) {
       newUser.profilePicture = {
         data: req.file.buffer,
@@ -44,7 +42,7 @@ export const registerUser = async (req, res) => {
       };
     }
     await newUser.save();
-    
+
     const token = jwt.sign({ userId: newUser._id }, JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -65,7 +63,7 @@ export const registerUser = async (req, res) => {
 
     const userObj = newUser.toObject();
     delete userObj.password;
-  
+
     if (userObj.profilePicture && userObj.profilePicture.data) {
       const base64 = userObj.profilePicture.data.toString("base64");
       userObj.profilePicture = `data:${userObj.profilePicture.contentType};base64,${base64}`;
@@ -77,7 +75,6 @@ export const registerUser = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
 
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
@@ -104,8 +101,6 @@ export const loginUser = async (req, res) => {
 
     res.cookie("token", token, cookieOptions);
 
-    // role cookie needs to be readable by frontend but still use SameSite=None
-    // in production so it will be sent on cross-site requests.
     const roleCookieOptions = {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
@@ -123,17 +118,13 @@ export const loginUser = async (req, res) => {
   }
 };
 
-
 export const registerTeacher = async (req, res) => {
-
   if (!req.body) {
     console.error("registerTeacher: missing req.body; headers:", req.headers);
-    return res
-      .status(400)
-      .json({
-        message:
-          "Request body missing; ensure you're sending multipart/form-data and multer middleware is applied.",
-      });
+    return res.status(400).json({
+      message:
+        "Request body missing; ensure you're sending multipart/form-data and multer middleware is applied.",
+    });
   }
   const {
     name,
@@ -162,7 +153,6 @@ export const registerTeacher = async (req, res) => {
       ? achievements.split(",").map((item) => item.trim())
       : [];
 
-   
     let subjectsArray = [];
     if (Array.isArray(subjects))
       subjectsArray = subjects.map((s) => String(s).trim()).filter(Boolean);
@@ -173,7 +163,6 @@ export const registerTeacher = async (req, res) => {
         .filter(Boolean);
     else if (subject) subjectsArray = [String(subject).trim()];
 
-   
     if (subjectsArray.length === 0)
       return res
         .status(400)
@@ -194,7 +183,7 @@ export const registerTeacher = async (req, res) => {
       experience,
       review: [],
     });
-    
+
     if (req.file && req.file.buffer) {
       newUser.profilePicture = {
         data: req.file.buffer,
@@ -234,7 +223,6 @@ export const registerTeacher = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
 
 export const loginTeacher = async (req, res) => {
   const { email, password } = req.body;
@@ -292,7 +280,6 @@ export const getCurrentUser = async (req, res) => {
   }
 };
 
-
 export const getUserAvatar = async (req, res) => {
   try {
     const { id } = req.params;
@@ -311,7 +298,6 @@ export const getUserAvatar = async (req, res) => {
       .json({ message: "Server error", error: err.message });
   }
 };
-
 
 export const getTeacherAvatar = async (req, res) => {
   try {
@@ -371,13 +357,11 @@ export const getTeacherById = async (req, res) => {
     const { id } = req.params;
     if (!id) return res.status(400).json({ message: "Teacher id is required" });
 
-    
     const teacher = await Teacher.findById(id)
       .populate("collageId")
       .populate({ path: "review" });
 
     if (!teacher) return res.status(404).json({ message: "Teacher not found" });
-
 
     const total = teacher.review ? teacher.review.length : 0;
     const computeAverages = () => {
@@ -418,10 +402,8 @@ export const getTeacherById = async (req, res) => {
       return { overall, byCategory };
     };
 
-    
     const aggregates = computeAggregates(teacher.review || []);
 
-    
     const teacherObj = teacher.toObject();
     teacherObj.averageRating = teacher.averageRating || aggregates.overall || 0;
     teacherObj.categoryAverages =
@@ -438,10 +420,9 @@ export const getTeacherById = async (req, res) => {
   }
 };
 
-
 export const createReview = async (req, res) => {
   try {
-    const { id } = req.params; 
+    const { id } = req.params;
     const {
       overallRating,
       knowledgeRating,
@@ -457,12 +438,10 @@ export const createReview = async (req, res) => {
       universityId,
     } = req.body;
 
-    
     if (!id) return res.status(400).json({ message: "Teacher id required" });
     const teacher = await Teacher.findById(id);
     if (!teacher) return res.status(404).json({ message: "Teacher not found" });
 
-  
     const ratingFields = {
       overallRating,
       knowledgeRating,
@@ -514,11 +493,9 @@ export const createReview = async (req, res) => {
 
     await newReview.save();
 
-    
     teacher.review = teacher.review || [];
     teacher.review.push(newReview._id);
 
-    
     const reviews = await Review.find({ teacherId: id });
     const aggregates = computeAggregates(reviews || []);
 
@@ -538,7 +515,6 @@ export const createReview = async (req, res) => {
         }
       }
     } catch (e) {
-   
       console.warn("Failed to attach review to user profile:", e.message);
     }
     const populatedTeacher = await Teacher.findById(id)
@@ -556,7 +532,6 @@ export const createReview = async (req, res) => {
   }
 };
 
-
 const computeAggregates = (reviews) => {
   const total = reviews.length || 0;
   const keys = [
@@ -571,7 +546,6 @@ const computeAggregates = (reviews) => {
     "approachabilityRating",
     "feedbackRating",
   ];
-
 
   const sentimentScore = (text) => {
     if (!text || typeof text !== "string") return 0;
@@ -606,10 +580,10 @@ const computeAggregates = (reviews) => {
     let score = 0;
     pos.forEach((w) => (score += t.includes(w) ? 1 : 0));
     neg.forEach((w) => (score -= t.includes(w) ? 1 : 0));
-   
+
     if (score > 3) score = 3;
     if (score < -3) score = -3;
-    return score / 3; 
+    return score / 3;
   };
 
   if (!total) {
@@ -618,17 +592,16 @@ const computeAggregates = (reviews) => {
 
   const sums = {};
   keys.forEach((k) => (sums[k] = 0));
-  
+
   const perReviewScores = [];
 
   reviews.forEach((r) => {
-    
     const numericKeys = keys.filter((k) => k !== "overallRating");
     const numericSum = numericKeys.reduce(
       (acc, k) => acc + (Number(r[k]) || 0),
       0
     );
-    const numericAvg = numericSum / numericKeys.length; 
+    const numericAvg = numericSum / numericKeys.length;
     let textAggregate = 0;
     const textFields = [
       r.comment,
@@ -645,14 +618,12 @@ const computeAggregates = (reviews) => {
     textFields.forEach((tf) => {
       textAggregate += sentimentScore(tf);
     });
-    
+
     const avgSentiment = textAggregate / textFields.length;
 
-    
     const sentimentBonus = avgSentiment * 0.25;
     const overallRating = Number(r.overallRating) || numericAvg;
 
-   
     const perScore = Math.min(
       5,
       Math.max(1, (numericAvg + overallRating) / 2 + sentimentBonus)
@@ -660,13 +631,11 @@ const computeAggregates = (reviews) => {
 
     perReviewScores.push(perScore);
 
-   
     keys.forEach((k) => {
       sums[k] += Number(r[k]) || 0;
     });
   });
 
-  
   const overall = Number(
     (
       perReviewScores.reduce((a, b) => a + b, 0) / perReviewScores.length

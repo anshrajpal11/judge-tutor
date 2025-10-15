@@ -4,12 +4,12 @@ import { Link } from "react-router-dom";
 const Hero = () => {
   return (
     <section className="bg-gray-50 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 md:px-10 py-24 flex flex-col lg:flex-row items-center justify-between gap-12">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 py-16 sm:py-20 flex flex-col lg:flex-row items-center justify-between gap-8">
         {/* LEFT CONTENT */}
-        <div className="flex-1 space-y-8 text-center lg:text-left">
-          <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight">
-            Discover & rate amazing <br className="hidden md:block" /> teachers
-            in your college.
+        <div className="flex-1 space-y-6 text-center lg:text-left">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+            Discover & rate amazing
+            <br className="hidden md:block" /> teachers in your college.
           </h1>
 
           <p className="text-gray-600 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto lg:mx-0">
@@ -17,7 +17,7 @@ const Hero = () => {
             and celebrate great educators.
           </p>
 
-          <div className="flex flex-col sm:flex-row flex-wrap justify-center lg:justify-start gap-4 pt-4">
+          <div className="flex flex-col sm:flex-row flex-wrap justify-center lg:justify-start gap-3 pt-4 w-full">
             <Link
               to="/signin"
               className="px-6 py-3 rounded-xl text-white bg-gray-900 hover:bg-gray-800 font-medium shadow-md transition w-full sm:w-auto text-center"

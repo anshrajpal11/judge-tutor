@@ -147,6 +147,28 @@
   @apply w-24 h-24 rounded-full object-cover;
 }
 
+/* Responsive tweaks: mobile-first sensible defaults */
+@media (max-width: 640px) {
+  :root {
+    --radius: 0.5rem;
+  }
+
+  .avatar-sm { @apply w-8 h-8; }
+  .avatar-md { @apply w-10 h-10; }
+  .avatar-lg { @apply w-20 h-20; }
+
+  /* Reduce base paddings and text sizes on very small screens */
+  h1, .text-4xl { font-size: 1.5rem; }
+  .text-2xl { font-size: 1.125rem; }
+  .text-lg { font-size: 0.95rem; }
+
+  /* Ensure cards and content have comfortable side padding */
+  .max-w-7xl { padding-left: 0.75rem; padding-right: 0.75rem; }
+}
+
+/* Make interactive elements full-width on tiny screens where appropriate */
+.btn-full-sm { width: 100%; }
+
 /* Hide scrollbar for overflow-x containers (nice UX for tab navs) */
 .no-scrollbar {
   -ms-overflow-style: none; /* IE and Edge */

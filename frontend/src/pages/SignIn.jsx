@@ -318,7 +318,7 @@ const SignIn = () => {
                     <h3 className="text-xl font-semibold text-gray-900">
                       Student Portal
                     </h3>
-                    <div className="flex justify-center space-x-4 mt-4">
+                    <div className="flex flex-col sm:flex-row items-center sm:justify-center gap-3 mt-4">
                       <button
                         onClick={() =>
                           setStudentForm((prev) => ({
@@ -580,7 +580,7 @@ const SignIn = () => {
                     <h3 className="text-xl font-semibold text-gray-900">
                       Teacher Portal
                     </h3>
-                    <div className="flex justify-center space-x-4 mt-4">
+                    <div className="flex flex-col sm:flex-row items-center sm:justify-center gap-3 mt-4">
                       <button
                         onClick={() =>
                           setTeacherForm((prev) => ({

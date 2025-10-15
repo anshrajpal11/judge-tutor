@@ -49,18 +49,18 @@ const Navbar = () => {
             </div>
           </Link>
 
-          <div className="hidden md:flex items-center space-x-6">
+      <div className="hidden md:flex items-center space-x-6">
             <Link
               to="/teachers"
               className="text-gray-700 hover:text-gray-900 transition-colors"
             >
               Teachers
-            </Link>
             <Link
-              to="/rankings"
-              className="text-gray-700 hover:text-gray-900 transition-colors"
+              to="/signin"
+              className="bg-gray-900 text-white px-4 py-2 rounded-md text-sm hover:bg-gray-800 transition-colors inline-block"
             >
-              Rankings
+              Sign in
+            </Link>
             </Link>
             <Link
               to="/add-review"
@@ -150,7 +150,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden px-4 pt-2 pb-4 space-y-2 border-t">
+  <div className="md:hidden px-3 pt-2 pb-4 space-y-2 border-t">
           <div className="flex items-center justify-between px-2">
             {user ? (
               <div className="flex items-center space-x-3">

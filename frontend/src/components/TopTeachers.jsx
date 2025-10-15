@@ -103,7 +103,7 @@ export default function TopTeachers({ limit = 4 }) {
 
   return (
     <section
-      className="mt-16 mx-4 md:mx-10 lg:mx-20"
+      className="mt-12 mx-3 sm:mx-4 md:mx-10 lg:mx-20"
       aria-labelledby="top-teachers-heading"
     >
       <Card className="overflow-hidden border-border shadow-xl rounded-3xl">
@@ -125,10 +125,10 @@ export default function TopTeachers({ limit = 4 }) {
           </div>
         </CardHeader>
 
-        <CardContent className="p-4 md:p-8 space-y-6">
+  <CardContent className="p-3 md:p-8 space-y-5">
           {/* Loading */}
           {isLoading && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 gap-4 md:gap-6">
               {Array(4)
                 .fill(0)
                 .map((_, i) => (
@@ -160,7 +160,7 @@ export default function TopTeachers({ limit = 4 }) {
 
           {/* Teacher list */}
           {!isLoading && !error && teachers.length > 0 && (
-            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 md:gap-6">
+            <ul className="grid grid-cols-1 gap-3 md:gap-6">
               {teachers.map((teacher, index) => {
                 const rank = index + 1;
                 const school =
@@ -197,8 +197,8 @@ export default function TopTeachers({ limit = 4 }) {
                         glow
                       )}
                     >
-                      <CardContent className="p-5 flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-4 min-w-0">
+                      <CardContent className="p-4 sm:p-5 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
                           <div className="relative">
                             <Avatar className="h-10 w-10 md:h-12 md:w-12 ring-2 ring-primary/20 group-hover:ring-primary/40 transition">
                               <AvatarImage
