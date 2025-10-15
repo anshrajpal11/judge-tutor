@@ -125,7 +125,7 @@ export default function TopTeachers({ limit = 4 }) {
           </div>
         </CardHeader>
 
-  <CardContent className="p-3 md:p-8 space-y-5">
+        <CardContent className="p-3 md:p-8 space-y-5">
           {/* Loading */}
           {isLoading && (
             <div className="grid grid-cols-1 gap-4 md:gap-6">

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Hero = () => {
   return (
     <section className="bg-gray-50 relative overflow-hidden">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 py-16 sm:py-20 flex flex-col lg:flex-row items-center justify-between gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 py-16 sm:py-20 flex flex-col lg:flex-row items-center justify-between gap-8">
         {/* LEFT CONTENT */}
         <div className="flex-1 space-y-6 text-center lg:text-left">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
