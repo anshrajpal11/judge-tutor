@@ -1,4 +1,4 @@
-// add college according to college.model.js
+
 import College from "../models/collage.model.js";
 
 export const createCollege = async (req, res) => {
@@ -18,7 +18,7 @@ export const createCollege = async (req, res) => {
   }
 };
 
-// get all colleges
+
 export const getAllColleges = async (req, res) => {
   try {
     const colleges = await College.find({}).sort({ name: 1 });

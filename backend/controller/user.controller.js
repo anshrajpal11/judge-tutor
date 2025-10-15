@@ -11,7 +11,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 import Review from "../models/review.model.js";
 
-// Register a new user also assign college ID based on college name
+
 
 export const registerUser = async (req, res) => {
   const { name, email, password, collegeName } = req.body;
@@ -36,7 +36,7 @@ export const registerUser = async (req, res) => {
       collageId: collegeId,
       reviews: [],
     });
-    // if a profile picture was uploaded via multipart/form-data (multer)
+    
     if (req.file && req.file.buffer) {
       newUser.profilePicture = {
         data: req.file.buffer,
@@ -44,27 +44,28 @@ export const registerUser = async (req, res) => {
       };
     }
     await newUser.save();
-
-    // auto-login: create JWT cookie so frontend can immediately fetch /user/me
+    
     const token = jwt.sign({ userId: newUser._id }, JWT_SECRET, {
       expiresIn: "1h",
     });
-    res.cookie("token", token, {
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "lax",
       maxAge: 60 * 60 * 1000,
-    });
-    res.cookie("role", "student", {
+    };
+    res.cookie("token", token, cookieOptions);
+    const roleCookieOptions = {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "lax",
       maxAge: 60 * 60 * 1000,
-    });
+    };
+    res.cookie("role", "student", roleCookieOptions);
 
     const userObj = newUser.toObject();
     delete userObj.password;
-    // convert profile picture to data URL for convenience if present
+  
     if (userObj.profilePicture && userObj.profilePicture.data) {
       const base64 = userObj.profilePicture.data.toString("base64");
       userObj.profilePicture = `data:${userObj.profilePicture.contentType};base64,${base64}`;
@@ -77,7 +78,7 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// sign in user and return JWT token
+
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -92,20 +93,27 @@ export const loginUser = async (req, res) => {
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
       expiresIn: "1h",
     });
-    // use cookies to store token in browser
-    res.cookie("token", token, {
+    // Set cookie options so that cookies are sent in cross-site requests from the
+    // deployed frontend. In production we must set Secure and SameSite=None.
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
-      maxAge: 60 * 60 * 1000,
-    });
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+    };
 
-    res.cookie("role", "student", {
-      httpOnly: false, // role can be read by frontend if needed
+    res.cookie("token", token, cookieOptions);
+
+    // role cookie needs to be readable by frontend but still use SameSite=None
+    // in production so it will be sent on cross-site requests.
+    const roleCookieOptions = {
+      httpOnly: false,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "lax",
       maxAge: 60 * 60 * 1000,
-    });
+    };
+
+    res.cookie("role", "student", roleCookieOptions);
 
     res
       .status(200)
@@ -115,9 +123,9 @@ export const loginUser = async (req, res) => {
   }
 };
 
-// teacher register
+
 export const registerTeacher = async (req, res) => {
-  // defensive: req.body should be populated by multer for multipart/form-data
+
   if (!req.body) {
     console.error("registerTeacher: missing req.body; headers:", req.headers);
     return res
@@ -154,7 +162,7 @@ export const registerTeacher = async (req, res) => {
       ? achievements.split(",").map((item) => item.trim())
       : [];
 
-    // subjects: accept either subjects array or comma-separated string
+   
     let subjectsArray = [];
     if (Array.isArray(subjects))
       subjectsArray = subjects.map((s) => String(s).trim()).filter(Boolean);
@@ -165,7 +173,7 @@ export const registerTeacher = async (req, res) => {
         .filter(Boolean);
     else if (subject) subjectsArray = [String(subject).trim()];
 
-    // validate required fields: at least one subject and description
+   
     if (subjectsArray.length === 0)
       return res
         .status(400)
@@ -186,7 +194,7 @@ export const registerTeacher = async (req, res) => {
       experience,
       review: [],
     });
-    // handle optional profile picture
+    
     if (req.file && req.file.buffer) {
       newUser.profilePicture = {
         data: req.file.buffer,
@@ -198,18 +206,20 @@ export const registerTeacher = async (req, res) => {
     const token = jwt.sign({ userId: newUser._id }, JWT_SECRET, {
       expiresIn: "1h",
     });
-    res.cookie("token", token, {
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "lax",
       maxAge: 60 * 60 * 1000,
-    });
-    res.cookie("role", "teacher", {
+    };
+    res.cookie("token", token, cookieOptions);
+    const roleCookieOptions = {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "lax",
       maxAge: 60 * 60 * 1000,
-    });
+    };
+    res.cookie("role", "teacher", roleCookieOptions);
 
     const teacherObj = newUser.toObject();
     delete teacherObj.password;
@@ -225,7 +235,7 @@ export const registerTeacher = async (req, res) => {
   }
 };
 
-// teacher login
+
 export const loginTeacher = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -240,19 +250,21 @@ export const loginTeacher = async (req, res) => {
     const token = jwt.sign({ userId: teacher._id }, JWT_SECRET, {
       expiresIn: "1h",
     });
-    res.cookie("token", token, {
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "lax",
       maxAge: 60 * 60 * 1000,
-    });
+    };
+    res.cookie("token", token, cookieOptions);
 
-    res.cookie("role", "teacher", {
+    const roleCookieOptions = {
       httpOnly: false, // role can be read by frontend if needed
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "lax",
       maxAge: 60 * 60 * 1000,
-    });
+    };
+    res.cookie("role", "teacher", roleCookieOptions);
 
     res
       .status(200)
@@ -280,7 +292,7 @@ export const getCurrentUser = async (req, res) => {
   }
 };
 
-// return user's avatar binary (profilePicture) streamed with correct content type
+
 export const getUserAvatar = async (req, res) => {
   try {
     const { id } = req.params;
@@ -300,7 +312,7 @@ export const getUserAvatar = async (req, res) => {
   }
 };
 
-// return teacher's avatar binary
+
 export const getTeacherAvatar = async (req, res) => {
   try {
     const { id } = req.params;
@@ -331,9 +343,21 @@ export const getAllTeachers = async (req, res) => {
 
 export const logoutUser = async (req, res) => {
   try {
-    // clear auth cookies
-    res.clearCookie("token");
-    res.clearCookie("role");
+    // Clear cookies using same options as when they were set so browsers accept the
+    // deletion for cross-site cookies.
+    const clearOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "lax",
+    };
+    res.clearCookie("token", clearOptions);
+    // role cookie wasn't httpOnly when set; clear without httpOnly true so it matches
+    const clearRoleOptions = {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "lax",
+    };
+    res.clearCookie("role", clearRoleOptions);
     return res.status(200).json({ message: "Logged out" });
   } catch (err) {
     return res
@@ -347,14 +371,14 @@ export const getTeacherById = async (req, res) => {
     const { id } = req.params;
     if (!id) return res.status(400).json({ message: "Teacher id is required" });
 
-    // populate collage and reviews so frontend can render them
+    
     const teacher = await Teacher.findById(id)
       .populate("collageId")
       .populate({ path: "review" });
 
     if (!teacher) return res.status(404).json({ message: "Teacher not found" });
 
-    // ensure aggregates exist on the returned object (compute on-the-fly if missing)
+
     const total = teacher.review ? teacher.review.length : 0;
     const computeAverages = () => {
       if (!total) return { overall: 0, byCategory: {} };
@@ -394,10 +418,10 @@ export const getTeacherById = async (req, res) => {
       return { overall, byCategory };
     };
 
-    // compute averages (now using computeAggregates which considers text sentiment)
+    
     const aggregates = computeAggregates(teacher.review || []);
 
-    // attach convenient fields to response
+    
     const teacherObj = teacher.toObject();
     teacherObj.averageRating = teacher.averageRating || aggregates.overall || 0;
     teacherObj.categoryAverages =
@@ -405,7 +429,7 @@ export const getTeacherById = async (req, res) => {
         ? teacher.categoryAverages
         : aggregates.byCategory;
     teacherObj.totalReviews = teacher.totalReviews || total;
-    // include location for frontend display (prefer explicit teacher.location, then college address)
+
     teacherObj.location = teacher.location || teacher.collageId?.address || "";
 
     res.status(200).json(teacherObj);
@@ -414,10 +438,10 @@ export const getTeacherById = async (req, res) => {
   }
 };
 
-// create a review for a teacher
+
 export const createReview = async (req, res) => {
   try {
-    const { id } = req.params; // teacher id
+    const { id } = req.params; 
     const {
       overallRating,
       knowledgeRating,
@@ -433,12 +457,12 @@ export const createReview = async (req, res) => {
       universityId,
     } = req.body;
 
-    // basic validation
+    
     if (!id) return res.status(400).json({ message: "Teacher id required" });
     const teacher = await Teacher.findById(id);
     if (!teacher) return res.status(404).json({ message: "Teacher not found" });
 
-    // Validate numeric ratings: must be integers/floats between 1 and 5
+  
     const ratingFields = {
       overallRating,
       knowledgeRating,
@@ -490,21 +514,19 @@ export const createReview = async (req, res) => {
 
     await newReview.save();
 
-    // push review id to teacher
+    
     teacher.review = teacher.review || [];
     teacher.review.push(newReview._id);
 
-    // recompute aggregates using all reviews for this teacher
+    
     const reviews = await Review.find({ teacherId: id });
     const aggregates = computeAggregates(reviews || []);
 
-    // persist aggregates on teacher document for quick reads
     teacher.averageRating = aggregates.overall;
     teacher.categoryAverages = aggregates.byCategory;
     teacher.totalReviews = reviews.length;
     await teacher.save();
 
-    // If the request has an authenticated user, add the review to the user's profile
     try {
       const userId = req.userId;
       if (userId) {
@@ -516,7 +538,7 @@ export const createReview = async (req, res) => {
         }
       }
     } catch (e) {
-      // do not fail the request if adding to user profile fails
+   
       console.warn("Failed to attach review to user profile:", e.message);
     }
     const populatedTeacher = await Teacher.findById(id)
@@ -534,10 +556,7 @@ export const createReview = async (req, res) => {
   }
 };
 
-// helper: compute aggregates for a list of review documents
-// new logic: for each review compute a per-review score by averaging all numeric categories
-// and mixing in a small sentiment score derived from textual fields (comment and per-category review texts).
-// final teacher overall is the average of per-review scores.
+
 const computeAggregates = (reviews) => {
   const total = reviews.length || 0;
   const keys = [
@@ -553,7 +572,7 @@ const computeAggregates = (reviews) => {
     "feedbackRating",
   ];
 
-  // simple sentiment heuristic: look for positive/negative words and produce a score between -1 and 1
+
   const sentimentScore = (text) => {
     if (!text || typeof text !== "string") return 0;
     const t = text.toLowerCase();
@@ -587,32 +606,29 @@ const computeAggregates = (reviews) => {
     let score = 0;
     pos.forEach((w) => (score += t.includes(w) ? 1 : 0));
     neg.forEach((w) => (score -= t.includes(w) ? 1 : 0));
-    // normalize roughly to range [-1,1] based on matches up to 3 matches
+   
     if (score > 3) score = 3;
     if (score < -3) score = -3;
-    return score / 3; // -1 .. 1
+    return score / 3; 
   };
 
   if (!total) {
     return { overall: 0, byCategory: {} };
   }
 
-  // per-category sums to compute averages
   const sums = {};
   keys.forEach((k) => (sums[k] = 0));
-  // per-review computed scores
+  
   const perReviewScores = [];
 
   reviews.forEach((r) => {
-    // numeric average across the numeric categories (excluding overallRating optionally)
+    
     const numericKeys = keys.filter((k) => k !== "overallRating");
     const numericSum = numericKeys.reduce(
       (acc, k) => acc + (Number(r[k]) || 0),
       0
     );
-    const numericAvg = numericSum / numericKeys.length; // 1..5
-
-    // sentiment from comment + per-category review texts
+    const numericAvg = numericSum / numericKeys.length; 
     let textAggregate = 0;
     const textFields = [
       r.comment,
@@ -629,18 +645,14 @@ const computeAggregates = (reviews) => {
     textFields.forEach((tf) => {
       textAggregate += sentimentScore(tf);
     });
-    // average sentiment per text field in [-1,1]
+    
     const avgSentiment = textAggregate / textFields.length;
 
-    // map avgSentiment (-1..1) to a 0..1 multiplier where 0 means -1 => 0.5 weight down, 1 means +1 => 1.05 bonus
-    // we'll convert sentiment into a small additive bonus in [ -0.25, +0.25 ] scaled to 1..5 range
-    const sentimentBonus = avgSentiment * 0.25; // -0.25 .. +0.25
-
-    // combine numericAvg and overallRating (if present) into a per-review score
-    // prefer per-category numericAvg, but mix in the explicit overallRating if provided
+    
+    const sentimentBonus = avgSentiment * 0.25;
     const overallRating = Number(r.overallRating) || numericAvg;
 
-    // final per-review score: average of numericAvg and overallRating, then add sentimentBonus
+   
     const perScore = Math.min(
       5,
       Math.max(1, (numericAvg + overallRating) / 2 + sentimentBonus)
@@ -648,13 +660,13 @@ const computeAggregates = (reviews) => {
 
     perReviewScores.push(perScore);
 
-    // accumulate for category averages (use numeric category fields)
+   
     keys.forEach((k) => {
       sums[k] += Number(r[k]) || 0;
     });
   });
 
-  // compute overall as average of per-review scores
+  
   const overall = Number(
     (
       perReviewScores.reduce((a, b) => a + b, 0) / perReviewScores.length

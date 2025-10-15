@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
   createdAt: { type: Date, default: Date.now },
   collageId: { type: mongoose.Schema.Types.ObjectId, ref: "College" },
-  // profile picture stored as buffer + contentType
+  
   profilePicture: {
     data: { type: Buffer },
     contentType: { type: String },
