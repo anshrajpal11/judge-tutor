@@ -420,7 +420,7 @@ const Rankings = () => {
             {filteredAndSortedTeachers.map((teacher, index) => (
               <div
                 key={teacher.id}
-                className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+                className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-300"
               >
                 <div className="p-6">
                   <div className="flex items-start justify-between">
@@ -428,14 +428,14 @@ const Rankings = () => {
                       {/* Rank */}
                       <div className="flex-shrink-0">
                         <div
-                          className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg ${
+                          className={`w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-lg ring-2 ring-offset-2 ${
                             index === 0
-                              ? "bg-yellow-500"
+                              ? "bg-gradient-to-br from-yellow-400 to-yellow-600 ring-yellow-300"
                               : index === 1
-                              ? "bg-gray-400"
+                              ? "bg-gradient-to-br from-gray-400 to-gray-600 ring-gray-300"
                               : index === 2
-                              ? "bg-orange-600"
-                              : "bg-gray-600"
+                              ? "bg-gradient-to-br from-orange-400 to-orange-600 ring-orange-300"
+                              : "bg-gradient-to-br from-gray-500 to-gray-700 ring-gray-300"
                           }`}
                         >
                           {index + 1}
@@ -447,19 +447,19 @@ const Rankings = () => {
                         <img
                           src={teacher.img}
                           alt={teacher.name}
-                          className="w-16 h-16 rounded-full object-cover border border-gray-300"
+                          className="w-18 h-18 rounded-full object-cover border-2 border-gray-200 shadow-sm"
                         />
                         <div>
-                          <h3 className="text-xl font-semibold text-gray-900">
+                          <h3 className="text-xl font-bold text-gray-900 mb-1">
                             {teacher.name}
                           </h3>
-                          <div className="flex items-center space-x-2 mb-2">
+                          <div className="flex items-center space-x-2 mb-3">
                             <img
-                              src={teacher.universityLogo}
+                              src="https://vectorseek.com/wp-content/uploads/2023/04/Chitkara-University-Logo-Vector-730x730.jpg"
                               alt={teacher.university}
-                              className="w-5 h-5 rounded"
+                              className="w-6 h-6 rounded-full border border-gray-300"
                             />
-                            <span className="text-gray-600">
+                            <span className="text-gray-700 font-medium">
                               {teacher.university}
                             </span>
                           </div>
@@ -467,7 +467,7 @@ const Rankings = () => {
                             {teacher.subjects.map((subject, idx) => (
                               <span
                                 key={idx}
-                                className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-md"
+                                className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full border border-blue-200"
                               >
                                 {subject}
                               </span>
@@ -479,11 +479,11 @@ const Rankings = () => {
 
                     {/* Rating and Stats */}
                     <div className="text-right">
-                      <div className="mb-2">{renderStars(teacher.rating)}</div>
-                      <div className="text-sm text-gray-600 space-y-1">
-                        <div className="flex items-center space-x-1">
+                      <div className="mb-3">{renderStars(teacher.rating)}</div>
+                      <div className="text-sm text-gray-600 space-y-2">
+                        <div className="flex items-center justify-end space-x-1">
                           <svg
-                            className="w-4 h-4"
+                            className="w-4 h-4 text-gray-500"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -495,11 +495,11 @@ const Rankings = () => {
                               d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                           </svg>
-                          <span>{teacher.experience} years experience</span>
+                          <span className="font-medium">{teacher.experience} years</span>
                         </div>
-                        <div className="flex items-center space-x-1">
+                        <div className="flex items-center justify-end space-x-1">
                           <svg
-                            className="w-4 h-4"
+                            className="w-4 h-4 text-gray-500"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -511,7 +511,7 @@ const Rankings = () => {
                               d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
                             />
                           </svg>
-                          <span>
+                          <span className="font-medium">
                             {teacher.achievements.length} achievements
                           </span>
                         </div>
@@ -520,20 +520,20 @@ const Rankings = () => {
                   </div>
 
                   {/* Bio */}
-                  <div className="mt-4">
-                    <p className="text-gray-600 text-sm">{teacher.bio}</p>
+                  <div className="mt-5 bg-gray-50 rounded-lg p-4">
+                    <p className="text-gray-700 text-sm leading-relaxed">{teacher.bio}</p>
                   </div>
 
                   {/* Achievements */}
-                  <div className="mt-4">
-                    <h4 className="text-sm font-medium text-gray-900 mb-2">
+                  <div className="mt-5">
+                    <h4 className="text-sm font-semibold text-gray-900 mb-3">
                       Key Achievements:
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {teacher.achievements.map((achievement, idx) => (
                         <span
                           key={idx}
-                          className="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
+                          className="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full border border-green-200"
                         >
                           {achievement}
                         </span>
@@ -542,9 +542,9 @@ const Rankings = () => {
                   </div>
 
                   {/* Action Button */}
-                  <div className="mt-6 pt-4 border-t border-gray-200">
+                  <div className="mt-6 pt-4 border-t border-gray-200 flex justify-center">
                     <Link to={`/teacher-profile/${teacher.id}`}>
-                      <Button className="bg-gray-900 text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors">
+                      <Button className="bg-gradient-to-r from-gray-800 to-gray-900 text-white px-8 py-3 rounded-lg hover:from-gray-700 hover:to-gray-800 transition-all duration-300 shadow-md hover:shadow-lg">
                         View Full Profile
                       </Button>
                     </Link>
